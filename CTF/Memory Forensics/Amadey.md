@@ -59,23 +59,23 @@ Once finished, it will generate a file called "pid.2748.dmp". If you try cat or 
 
 ### Q5. Identifying the storage points of these additional components is critical for containment and cleanup. What is the full path of the file downloaded and used by the malware in its malicious activity?
 
-Now, we want to see if any of these files were ran in the system. We will use windows.cmdline to locate all the processes command lines.
+Now, we want to see if any of these files were ran in the system. We will use windows.cmdline to locate all the process command lines.
 ```bash
 python3 vol.py -f ../../Artifacts/Windows\ 7\ x64-Snapshot4.vmem windows.cmdline
 ```
-After analysing it for a few minutes, I found clip64.dll. As you may know, this is being executed by rundll32.exe, a Living Of The Land Binary. I didn't find anything related to cred64.dll, so this is what was used by Amadey.
+After analysing it for a few minutes, I found clip64.dll. As you may know, this is being executed by rundll32.exe, a Living Off The Land Binary. I didn't find anything related to cred64.dll, so this is what was used by Amadey.
 
 ![alt text](https://github.com/cyberalises/Cybersecurity-Portfolio/blob/main/Images/CTF%20Challenges/Amadey/Q5.png)
 
 ### Q6. Once retrieved, the malware aims to activate its additional components. Which child process is initiated by the malware to execute these files?
 
-Now, we want to know what is the child process that **lssass.exe** initiated. From the information that we've found so far, my guess is that the child process is rundll32.exe, because it's what executed clip64.dll. Yet again, guessing is not enough, so we use windows.pstree to look at parent-child relationships. 
+Now, we want to know what is the child process that **lssass.exe** initiated. From the information that we've found so far, my guess is that the child process is rundll32.exe, because it's what executed clip64.dll. Yet again, guessing is not enough, so we use windows.pstree to look at parent-child relationships:
 ```bash
 python3 vol.py -f ../../Artifacts/Windows\ 7\ x64-Snapshot4.vmem windows.pstree
 ```
 ![alt text](https://github.com/cyberalises/Cybersecurity-Portfolio/blob/main/Images/CTF%20Challenges/Amadey/Q6.png)
 
-As we can see in the screenshot, it is in fact rundll32.exe.
+As we can see in the screenshot, it is in fact **rundll32.exe**.
 
 ### Q7. Understanding the full range of Amadey's persistence mechanisms can help in an effective mitigation. Apart from the locations already spotlighted, where else might the malware be ensuring its consistent presence?
 
